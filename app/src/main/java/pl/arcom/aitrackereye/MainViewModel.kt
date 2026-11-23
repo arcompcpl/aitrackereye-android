@@ -141,7 +141,6 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         else -> offText
     }
 
-    fun setMessage(text: String) { message = text }
 
     private fun disconnectState(text: String = "Brak połączenia z kamerą") {
         if (!lost) {
