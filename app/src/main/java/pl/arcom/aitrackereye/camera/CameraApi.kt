@@ -107,7 +107,7 @@ class CameraApi(
 
     private fun checkStatus(code: Int) {
         when {
-            code == 401 -> throw CameraException("Zły login lub hasło.")
+            code == 401 -> throw CameraException(AUTH_ERROR)
             code == 403 -> throw CameraException("Brak uprawnień do tej funkcji.")
             code == 404 -> throw CameraException("Funkcja niedostępna w tej kamerze.")
             code >= 400 -> throw CameraException("Kamera odrzuciła polecenie (HTTP $code).")
@@ -288,7 +288,7 @@ class CameraApi(
                 snap.errors[section] = e.message ?: ""
             }
         }
-        if (MAIN_SECTIONS.none { it in snap.config }) throw CameraException("Kamera nie udostępnia ustawień przez CGI.")
+        if (MAIN_SECTIONS.none { it in snap.config }) throw noSettingsError(snap.errors)
         try {
             snap.currentTime = getTime()
         } catch (e: CameraException) {
@@ -312,6 +312,19 @@ class CameraApi(
     }
 
     companion object {
+        const val AUTH_ERROR = "Zły login lub hasło."
+
+        /** Komunikat, gdy nie odczytano żadnej głównej sekcji - z prawdziwą przyczyną (np. logowanie). */
+        fun noSettingsError(errors: Map<String, String>): CameraException {
+            val main = MAIN_SECTIONS.mapNotNull { errors[it] }
+            if (main.isNotEmpty() && main.all { it == AUTH_ERROR }) {
+                return CameraException("$AUTH_ERROR\nPo kilku błędnych próbach kamera może czasowo zablokować konto " +
+                    "(zwykle na 5-30 min).")
+            }
+            val details = errors.filterKeys { it in MAIN_SECTIONS }.entries.joinToString("\n") { "• ${it.key}: ${it.value}" }
+            return CameraException("Kamera nie udostępnia ustawień przez CGI." + if (details.isNotEmpty()) "\n$details" else "")
+        }
+
         /** Sekcje konfiguracji odczytywane przy połączeniu. Brak sekcji nie jest błędem. */
         val SECTIONS = listOf("Record", "RecordMode", "MediaGlobal", "Encode", "Locales", "NTP",
             "RecordStoragePoint", "StorageGlobal", "VideoWaterMark", "ChannelTitle")

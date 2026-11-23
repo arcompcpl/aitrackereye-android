@@ -217,15 +217,16 @@ fun digestAuthorization(
     val qopAuth = ch.qop?.split(',')?.map { it.trim().lowercase() }?.contains("auth") == true
     val ncText = "%08x".format(nc)
     val response = if (qopAuth) md5("$ha1:${ch.nonce}:$ncText:$cnonce:auth:$ha2") else md5("$ha1:${ch.nonce}:$ha2")
+    // Format jak w requests.HTTPDigestAuth (wersja Windows, sprawdzony z kamerami BCS/Dahua).
     val sb = StringBuilder("Digest ")
     sb.append("username=\"").append(user.replace("\"", "\\\"")).append("\", ")
     sb.append("realm=\"").append(ch.realm).append("\", ")
     sb.append("nonce=\"").append(ch.nonce).append("\", ")
     sb.append("uri=\"").append(uri).append("\", ")
-    if (ch.algorithm != null) sb.append("algorithm=").append(ch.algorithm).append(", ")
     sb.append("response=\"").append(response).append("\"")
     if (ch.opaque != null) sb.append(", opaque=\"").append(ch.opaque).append("\"")
-    if (qopAuth) sb.append(", qop=auth, nc=").append(ncText).append(", cnonce=\"").append(cnonce).append("\"")
+    if (ch.algorithm != null) sb.append(", algorithm=\"").append(ch.algorithm).append("\"")
+    if (qopAuth) sb.append(", qop=\"auth\", nc=").append(ncText).append(", cnonce=\"").append(cnonce).append("\"")
     return sb.toString()
 }
 

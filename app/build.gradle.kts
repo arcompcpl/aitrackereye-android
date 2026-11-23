@@ -12,8 +12,8 @@ android {
         applicationId = "pl.arcom.aitrackereye"
         minSdk = 24
         targetSdk = 35
-        versionCode = 41
-        versionName = "0.4.1-dev"
+        versionCode = 42
+        versionName = "0.4.1-dev2"
     }
 
     signingConfigs {

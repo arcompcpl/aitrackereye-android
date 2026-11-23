@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -276,11 +277,15 @@ private fun ConnectionForm(vm: MainViewModel, wide: Boolean, onExpand: (Boolean)
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = if (wide) Modifier.width(90.dp) else Modifier.weight(0.8f))
             }
-            OutlinedTextField(vm.user, vm::updateUser, label = { Text("Login") }, singleLine = true, modifier = fieldW)
+            OutlinedTextField(vm.user, vm::updateUser, label = { Text("Login") }, singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii, autoCorrectEnabled = false,
+                    capitalization = KeyboardCapitalization.None),
+                modifier = fieldW)
             OutlinedTextField(vm.password, vm::updatePassword, label = { Text("Hasło") }, singleLine = true,
                 placeholder = { Text("nie jest zapisywane") },
                 visualTransformation = if (showPw) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Go),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Go,
+                    autoCorrectEnabled = false, capitalization = KeyboardCapitalization.None),
                 keyboardActions = KeyboardActions(onGo = { vm.connect() }),
                 trailingIcon = {
                     IconButton(onClick = { showPw = !showPw }) {

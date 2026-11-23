@@ -67,7 +67,7 @@ class CameraCoreTest {
         assertEquals("testrealm@host.com", ch.realm)
         val h = digestAuthorization(ch, "Mufasa", "Circle Of Life", "GET", "/dir/index.html", 1, "0a4f113b")
         assertTrue(h, "response=\"6629fae49393a05397450978507c4ef1\"" in h)
-        assertTrue(h, "nc=00000001" in h && "opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"" in h)
+        assertTrue(h, "nc=00000001" in h && "qop=\"auth\"" in h && "opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"" in h)
     }
 
     @Test fun diagnosticHidesSecrets() {

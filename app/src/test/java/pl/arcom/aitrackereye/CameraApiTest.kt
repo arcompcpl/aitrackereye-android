@@ -189,6 +189,16 @@ class CameraApiTest {
         }
     }
 
+    @Test fun wrongPasswordOnRead() {
+        cam.password = "inne"
+        try {
+            api.read()
+            fail()
+        } catch (e: CameraException) {
+            assertTrue(e.message, e.message!!.startsWith("Zły login lub hasło."))
+        }
+    }
+
     @Test fun noConnection() {
         val dead = CameraApi(CameraAddress("127.0.0.1", "admin", "x", httpPort = 1), 1, 1)
         try {
